@@ -6,8 +6,12 @@ class HangMan
 
   def start
     set_starting_variables
-    current_guess = prompt_player_guess
-    result_of_guess(current_guess)
+    display_game_state
+    until @mistakes_left.zero? # Test run
+      current_guess = prompt_player_guess
+      result_of_guess(current_guess)
+      display_game_state
+    end
   end
 
   private
@@ -51,6 +55,15 @@ class HangMan
     @word_to_guess.split('').each_with_index do |letter, index|
       @current_standing[index] = current_guess if letter == current_guess
     end
+  end
+
+  def display_game_state
+    puts "\n_____________________________  Game State  ________________________________________"
+    puts 'Mistakes left || Current Standing || Correct letters used || Incorrect letters used'
+    mistakes_column = @mistakes_left.to_s.ljust(8).rjust(14)
+    standing_column = @current_standing.join('').ljust(17)
+    correct_column = @good_letters.join(' ').ljust(21)
+    puts "#{mistakes_column}|| #{standing_column}|| #{correct_column}|| #{@bad_letters.join(' ')}"
   end
 end
 
