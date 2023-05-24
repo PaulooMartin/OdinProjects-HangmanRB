@@ -1,6 +1,9 @@
+require 'json'
+
 class HangMan
-  def initialize(words_file_name)
+  def initialize(words_file_name, save_file_name)
     all_words = File.new(words_file_name, 'r').readlines
+    @save_file_name = save_file_name
     @dictionary = filter_words(all_words)
   end
 
@@ -35,7 +38,9 @@ class HangMan
     print 'Enter a letter: '
     guess = gets.chomp.downcase
     until guess.match?(/\A[a-zA-Z]\Z/) && !(@good_letters.include?(guess) || @bad_letters.include?(guess))
-      puts "\nIt seems like you gave an invalid or used input. Previous input: #{guess}"
+      save_game_state if guess == 'save'
+      message = guess == 'save' ? 'Game saved' : "It seems like you gave an invalid or used input. Prev input: #{guess}"
+      puts "\n#{message}"
       print 'Enter a new letter: '
       guess = gets.chomp.downcase
     end
@@ -76,9 +81,22 @@ class HangMan
       puts "Unfortunately, you lost! The word to guess was '#{@word_to_guess}'."
     end
   end
+
+  def save_game_state
+    File.open(@save_file_name, 'w') do |file|
+      JSON.dump({
+                  word_to_guess: @word_to_guess,
+                  current_standing: @current_standing,
+                  mistakes_left: @mistakes_left,
+                  good_letters: @good_letters,
+                  bad_letters: @bad_letters
+                }, file)
+    end
+  end
 end
 
 words_file_name = 'google-10000-english-no-swears.txt'
-game = HangMan.new(words_file_name)
+save_file_name =  'hangman-save-file.json'
+game = HangMan.new(words_file_name, save_file_name)
 
 game.start
