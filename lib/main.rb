@@ -11,7 +11,7 @@ class HangMan
     set_starting_variables
     display_game_state
     is_win = false
-    until @mistakes_left.zero? || is_win # Test run
+    until @mistakes_left.zero? || is_win
       current_guess = prompt_player_guess
       result_of_guess(current_guess)
       display_game_state
@@ -28,6 +28,7 @@ class HangMan
     @mistakes_left = 7
     @good_letters = []
     @bad_letters = []
+    load_game?
   end
 
   def filter_words(word_list)
@@ -92,6 +93,24 @@ class HangMan
                   bad_letters: @bad_letters
                 }, file)
     end
+  end
+
+  def load_game?
+    answer = 'meh'
+    until %w[y n].include?(answer)
+      print 'Do you want to load last saved progress? (y/n): '
+      answer = gets.chomp.downcase
+    end
+    load_last_saved_progress if answer == 'y'
+  end
+
+  def load_last_saved_progress
+    loaded_game_state = JSON.parse File.read(@save_file_name)
+    @word_to_guess = loaded_game_state['word_to_guess']
+    @current_standing = loaded_game_state['current_standing']
+    @mistakes_left = loaded_game_state['mistakes_left']
+    @good_letters = loaded_game_state['good_letters']
+    @bad_letters = loaded_game_state['bad_letters']
   end
 end
 
