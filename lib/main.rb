@@ -48,13 +48,13 @@ class HangMan
   end
 
   def prompt_player_guess
-    print 'Enter a letter: '
+    print 'Enter a letter or "save": '
     guess = gets.chomp.downcase
     until guess.match?(/\A[a-zA-Z]\Z/) && !(@good_letters.include?(guess) || @bad_letters.include?(guess))
       save_game_state if guess == 'save'
       message = guess == 'save' ? 'Game saved' : "It seems like you gave an invalid or used input. Prev input: #{guess}"
       puts "\n#{message}"
-      print 'Enter a new letter: '
+      print 'Enter a new letter or "save": '
       guess = gets.chomp.downcase
     end
     guess
@@ -82,9 +82,9 @@ class HangMan
     puts "\n____________________________  Hangman  ____________________________________________"
     puts 'Mistakes left || Current Standing || Correct letters used || Incorrect letters used'
     mistakes_column = @mistakes_left.to_s.ljust(8).rjust(14)
-    standing_column = @current_standing.join('').ljust(17)
+    standing_column = @current_standing.join('').ljust(14)
     correct_column = @good_letters.join(' ').ljust(21)
-    puts "#{mistakes_column}|| #{standing_column}|| #{correct_column}|| #{@bad_letters.join(' ')}"
+    puts "#{mistakes_column}|| #{standing_column}(#{@current_standing.length})|| #{correct_column}|| #{@bad_letters.join(' ')}"
   end
 
   def game_result(is_win)
