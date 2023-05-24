@@ -7,11 +7,14 @@ class HangMan
   def start
     set_starting_variables
     display_game_state
-    until @mistakes_left.zero? # Test run
+    is_win = false
+    until @mistakes_left.zero? || is_win # Test run
       current_guess = prompt_player_guess
       result_of_guess(current_guess)
       display_game_state
+      is_win = @current_standing.join('') == @word_to_guess
     end
+    game_result(is_win)
   end
 
   private
@@ -30,13 +33,13 @@ class HangMan
 
   def prompt_player_guess
     print 'Enter a letter: '
-    guess = gets.chomp
-    until guess.match?(/\A[a-zA-Z]\Z/)
-      puts "\nIt seems like you gave an invalid input. Previous input: #{guess}"
-      print 'Enter a letter: '
-      guess = gets.chomp
+    guess = gets.chomp.downcase
+    until guess.match?(/\A[a-zA-Z]\Z/) && !(@good_letters.include?(guess) || @bad_letters.include?(guess))
+      puts "\nIt seems like you gave an invalid or used input. Previous input: #{guess}"
+      print 'Enter a new letter: '
+      guess = gets.chomp.downcase
     end
-    guess.downcase
+    guess
   end
 
   def result_of_guess(current_guess)
@@ -64,6 +67,14 @@ class HangMan
     standing_column = @current_standing.join('').ljust(17)
     correct_column = @good_letters.join(' ').ljust(21)
     puts "#{mistakes_column}|| #{standing_column}|| #{correct_column}|| #{@bad_letters.join(' ')}"
+  end
+
+  def game_result(is_win)
+    if is_win
+      puts 'Congratulations player! You won the game :D'
+    else
+      puts "Unfortunately, you lost! The word to guess was '#{@word_to_guess}'."
+    end
   end
 end
 
