@@ -1,5 +1,17 @@
 require 'json'
 
+def start_message
+  puts 'Welcome to Hangman!'
+  puts 'In Hangman, you will have to guess the secret word (eg. _____) by giving its individual letters.'
+  sleep 4
+  puts 'Giving a letter will yield a result. If the letter was good, it will replace the "_" in place (eg. a___e).'
+  puts 'If the letter was bad, the number of mistakes you have left will decrease.'
+  sleep 4
+  puts 'If you wish to save your current progress, type "save" when prompted for a letter'
+  puts ''
+  puts 'Welcome to Hangman! Goodluck!'
+end
+
 class HangMan
   def initialize(words_file_name, save_file_name)
     all_words = File.new(words_file_name, 'r').readlines
@@ -67,7 +79,7 @@ class HangMan
   end
 
   def display_game_state
-    puts "\n_____________________________  Game State  ________________________________________"
+    puts "\n____________________________  Hangman  ____________________________________________"
     puts 'Mistakes left || Current Standing || Correct letters used || Incorrect letters used'
     mistakes_column = @mistakes_left.to_s.ljust(8).rjust(14)
     standing_column = @current_standing.join('').ljust(17)
@@ -116,6 +128,7 @@ end
 
 words_file_name = 'google-10000-english-no-swears.txt'
 save_file_name =  'hangman-save-file.json'
+start_message
 game = HangMan.new(words_file_name, save_file_name)
 
 game.start
